@@ -65,52 +65,17 @@ long        hueShift =  0;
 char *zip = "78717";
 
 void setup() {
-  // variable name max length is 12 characters long
-  Spark.variable("zipCode", zip, STRING);
-
   //Spark functions
   Spark.function("showWeather", drawTemp);
   Spark.function("setText", drawText);
 
   matrix.begin();
 
-  drawShapes();
-  delay(1000);
-
-  drawText("Hello Ben and Jack!");
-
-  drawTemp(zip);
+  drawText("LED Box v0.1");
 }
 
 void loop() {
   drawPlasma();
-}
-
-void drawShapes() {
-  // draw a pixel in solid white
-  //matrix.drawPixel(0, 0, matrix.Color333(7, 7, 7));
-  //delay(500);
-
-  // fix the screen with green
-  matrix.fillRect(0, 0, 32, 32, matrix.Color333(0, 7, 0));
-  delay(500);
-
-  // draw a box in yellow
-  matrix.drawRect(0, 0, 32, 32, matrix.Color333(7, 7, 0));
-  delay(500);
-
-  // draw an 'X' in red
-  matrix.drawLine(0, 0, 31, 31, matrix.Color333(7, 0, 0));
-  matrix.drawLine(31, 0, 0, 31, matrix.Color333(7, 0, 0));
-  delay(500);
-
-  // draw a blue circle
-  matrix.drawCircle(10, 10, 10, matrix.Color333(0, 0, 7));
-  delay(500);
-
-  // fill a violet circle
-  matrix.fillCircle(21, 21, 10, matrix.Color333(7, 0, 7));
-  delay(500);
 }
 
 // TODO: ADD MULTILINE SUPPORT
@@ -134,23 +99,20 @@ int drawText(String command) {
   matrix.setTextSize(1);     // size 1 == 8 pixels high
   matrix.setTextWrap(false);
 
-
   matrix.setTextColor(matrix.Color333(7,7,7));
   matrix.println(text);
-
-  /*matrix.setTextColor(matrix.Color333(0,0,7));
-  matrix.print("Ben");
-
-  matrix.setTextColor(matrix.Color333(7,0,0));
-  matrix.println(" &");
-
-  matrix.setTextColor(matrix.Color333(0,7,0));
-  matrix.println("Jack!");*/
 
   delay(3000);
 }
 
 int drawTemp(String city) {
+  String text;
+
+  if (city.length() == 0) {
+      text = "";
+  } else {
+    text = city;
+  }
 
   // fill the screen with 'black'
   matrix.fillScreen(matrix.Color333(0, 0, 0));
@@ -162,6 +124,9 @@ int drawTemp(String city) {
   matrix.print("73");
 
   matrix.drawCircle(26, 2, 2, matrix.Color333(0, 0, 7));
+  matrix.println();
+
+  matrix.setTextSize(1);
   matrix.println(city);
 
   delay(5000);
