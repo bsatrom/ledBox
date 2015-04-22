@@ -61,9 +61,6 @@ long        hueShift =  0;
 #define openweatherdomain ""
 #define openweatherkey "bd9bd69df190b94430443d2566227376"
 
-// Spark Variables
-char *zip = "78717";
-
 void setup() {
   //Spark functions
   Spark.function("showWeather", drawTemp);
@@ -78,10 +75,10 @@ void loop() {
   drawPlasma();
 }
 
-// TODO: ADD MULTILINE SUPPORT
 int drawText(String command) {
   String text;
   int lines = 1;
+  int i;
 
   if (command.length() == 0) {
       text = "Y U NO ENTER TEXT?";
@@ -89,8 +86,34 @@ int drawText(String command) {
     text = command;
   }
 
-  //Split the text across lines by spaces
+  prepScreenForText();
 
+  // Print the text character by character to ensure proper
+  // wrapping of text across lines
+  char textArray[1024];
+  strncpy(textArray, text.c_str(), sizeof(text));
+  textArray[sizeof(text) - 1] = 0;
+
+  for (i = 0; textArray[i]; i++) {
+
+    // We've written 3 lines of text, which fills the screen, pause then wipe
+    // the display
+    if ( (i % 15) == 0 && i != 0) {
+      delay(300);
+      prepScreenForText();
+    }
+
+    if ( (i % 4) == 0 && i != 0 ) {
+      matrix.println(textArray[i]);
+    } else {
+      matrix.print(textArray[i]);
+    }
+  }
+
+  delay(3000);
+}
+
+void prepScreenForText() {
   // fill the screen with 'black'
   matrix.fillScreen(matrix.Color333(0, 0, 0));
 
@@ -100,9 +123,6 @@ int drawText(String command) {
   matrix.setTextWrap(false);
 
   matrix.setTextColor(matrix.Color333(7,7,7));
-  matrix.println(text);
-
-  delay(3000);
 }
 
 int drawTemp(String city) {

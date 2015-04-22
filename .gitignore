@@ -1,3 +1,5 @@
+ledBox/firmware_*
+
 # Compiled Object files
 *.slo
 *.lo
