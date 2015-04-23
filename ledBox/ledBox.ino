@@ -9,7 +9,7 @@
 #define A   A0
 #define B   A1
 #define C   A2
-#define D	 A3
+#define D	  A3
 
 RGBmatrixPanel matrix(A, B, C, D, CLK, LAT, OE, false);
 
@@ -55,13 +55,20 @@ const float radius1  = 16.3, radius2  = 23.0, radius3  = 40.8, radius4  = 44.2,
 float       angle1   =  0.0, angle2   =  0.0, angle3   =  0.0, angle4   =  0.0;
 long        hueShift =  0;
 
-#define debug true
+#define debug false
 
 // temperature service constants
 #define openweatherdomain ""
 #define openweatherkey "bd9bd69df190b94430443d2566227376"
 
 void setup() {
+  if (debug) {
+    Serial.begin(115200);
+
+    delay(4000);
+    Serial.println("Debugging LED Box...");
+  }
+
   //Spark functions
   Spark.function("showWeather", drawTemp);
   Spark.function("setText", drawText);
@@ -77,8 +84,9 @@ void loop() {
 
 int drawText(String command) {
   String text;
-  int lines = 1;
-  int i;
+  int lastWordLength = 0;
+  int currentWordLength = 0;
+  int line = 1;
 
   if (command.length() == 0) {
       text = "Y U NO ENTER TEXT?";
@@ -86,43 +94,52 @@ int drawText(String command) {
     text = command;
   }
 
+  if (debug) {
+      Serial.print("Text sent to panel: ");
+      Serial.println(text);
+  }
+
   prepScreenForText();
 
-  // Print the text character by character to ensure proper
-  // wrapping of text across lines
   char textArray[1024];
   strncpy(textArray, text.c_str(), sizeof(text));
   textArray[sizeof(text) - 1] = 0;
+  char* word = strtok(textArray, " ");
 
-  for (i = 0; textArray[i]; i++) {
+  while (word != 0) {
+    currentWordLength = strlen(word);
 
-    // We've written 3 lines of text, which fills the screen, pause then wipe
-    // the display
-    if ( (i % 15) == 0 && i != 0) {
-      delay(300);
+    if (line == 5) {
+      line = 1;
+      delay(3000);
       prepScreenForText();
     }
 
-    if ( (i % 4) == 0 && i != 0 ) {
-      matrix.println(textArray[i]);
+    if (lastWordLength == 0) {
+      if (currentWordLength >= 4) {
+        matrix.println(word);
+        line++;
+      } else {
+        matrix.print(word);
+      }
     } else {
-      matrix.print(textArray[i]);
+      if ( currentWordLength > (5 - lastWordLength) ) {
+        matrix.println();
+        line++;
+      } else {
+        currentWordLength += lastWordLength;
+        matrix.print(" ");
+      }
+      matrix.print(word);
     }
+
+    lastWordLength = currentWordLength;
+    word = strtok(0, " ");
   }
 
   delay(3000);
-}
 
-void prepScreenForText() {
-  // fill the screen with 'black'
-  matrix.fillScreen(matrix.Color333(0, 0, 0));
-
-  // draw some text!
-  matrix.setCursor(1, 0);    // start at top left, with one pixel of spacing
-  matrix.setTextSize(1);     // size 1 == 8 pixels high
-  matrix.setTextWrap(false);
-
-  matrix.setTextColor(matrix.Color333(7,7,7));
+  return 1;
 }
 
 int drawTemp(String city) {
@@ -189,4 +206,16 @@ void drawPlasma() {
   hueShift += 2;
 
   delay(100);
+}
+
+void prepScreenForText() {
+  // fill the screen with 'black'
+  matrix.fillScreen(matrix.Color333(0, 0, 0));
+
+  // draw some text!
+  matrix.setCursor(1, 0);    // start at top left, with one pixel of spacing
+  matrix.setTextSize(1);     // size 1 == 8 pixels high
+  matrix.setTextWrap(false);
+
+  matrix.setTextColor(matrix.Color333(7,7,7));
 }
