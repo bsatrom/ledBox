@@ -119,6 +119,7 @@ int drawText(String command) {
       if (currentWordLength >= 4) {
         matrix.println(word);
         line++;
+        currentWordLength = 0;
       } else {
         matrix.print(word);
       }
@@ -126,8 +127,12 @@ int drawText(String command) {
       if ( currentWordLength > (5 - lastWordLength) ) {
         matrix.println();
         line++;
+      } else if ( currentWordLength + lastWordLength >= 5 ) {
+        matrix.println();
+        line++;
+        currentWordLength = 0;
       } else {
-        currentWordLength += lastWordLength;
+        currentWordLength += lastWordLength+1;
         matrix.print(" ");
       }
       matrix.print(word);
