@@ -61,6 +61,8 @@ long        hueShift =  0;
 #define openweatherdomain ""
 #define openweatherkey "bd9bd69df190b94430443d2566227376"
 
+String currentFeature;
+
 void setup() {
   if (debug) {
     Serial.begin(115200);
@@ -72,14 +74,19 @@ void setup() {
   //Spark functions
   Spark.function("showWeather", drawTemp);
   Spark.function("setText", drawText);
+  Spark.function("showPlasma", drawPlasma);
 
   matrix.begin();
 
   drawText("LED Box v0.1");
+
+  prepScreenForText();
 }
 
 void loop() {
-  drawPlasma();
+  if (currentFeature == "plasma") {
+    drawPlasma("none");
+  }
 }
 
 int drawText(String command) {
@@ -87,6 +94,8 @@ int drawText(String command) {
   int lastWordLength = 0;
   int currentWordLength = 0;
   int line = 1;
+
+  currentFeature = "text";
 
   if (command.length() == 0) {
       text = "Y U NO ENTER TEXT?";
@@ -150,6 +159,8 @@ int drawText(String command) {
 int drawTemp(String city) {
   String text;
 
+  currentFeature = "temp";
+
   if (city.length() == 0) {
       text = "";
   } else {
@@ -176,10 +187,12 @@ int drawTemp(String city) {
   return 1;
 }
 
-void drawPlasma() {
+int drawPlasma(String command) {
   int           x1, x2, x3, x4, y1, y2, y3, y4, sx1, sx2, sx3, sx4;
   unsigned char x, y;
   long          value;
+
+  currentFeature = "plasma";
 
   sx1 = (int)(cos(angle1) * radius1 + centerx1);
   sx2 = (int)(cos(angle2) * radius2 + centerx2);
@@ -211,6 +224,8 @@ void drawPlasma() {
   hueShift += 2;
 
   delay(100);
+
+  return 1;
 }
 
 void prepScreenForText() {
