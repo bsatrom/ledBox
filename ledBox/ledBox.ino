@@ -75,10 +75,11 @@ void setup() {
   Spark.function("showWeather", drawTemp);
   Spark.function("setText", drawText);
   Spark.function("showPlasma", drawPlasma);
+  Spark.function("clearScreen", clearScreen);
 
   matrix.begin();
 
-  drawText("LED Box v0.1");
+  drawText("LED Box v0.2");
 
   prepScreenForText();
 }
@@ -238,4 +239,12 @@ void prepScreenForText() {
   matrix.setTextWrap(false);
 
   matrix.setTextColor(matrix.Color333(7,7,7));
+}
+
+int clearScreen(String command) {
+  currentFeature = "clear";
+
+  prepScreenForText();
+
+  return 1;
 }
