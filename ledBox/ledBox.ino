@@ -2,7 +2,7 @@
 #include "RGBmatrixPanel.h" // Hardware-specific library
 #include "math.h"
 
-// LED Pins
+// LED Matrix Pins
 #define CLK D6
 #define OE  D7
 #define LAT A4
@@ -68,7 +68,7 @@ void setup() {
     Serial.begin(115200);
 
     delay(4000);
-    Serial.println("Debugging LED Box...");
+    Serial.println("Debugging Magic Box...");
   }
 
   //Spark functions
@@ -99,7 +99,7 @@ int drawText(String command) {
   currentFeature = "text";
 
   if (command.length() == 0) {
-      text = "Y U NO ENTER TEXT?";
+      text = "ENTER TEXT?";
   } else {
     text = command;
   }

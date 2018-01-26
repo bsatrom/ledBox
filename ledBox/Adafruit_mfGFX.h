@@ -1,7 +1,16 @@
+/*
+Multifont GFX library is adapted from Adafruit_GFX library by Paul Kourany
+v1.0.0, May 2014 Initial Release
+v1.0.1, June 2014 Font Compilation update
+v1.0.2, Aug 2015 Added charWidth(char) function to return char width in pixels
+
+Please read README.pdf for details
+*/
+
 #ifndef _ADAFRUIT_GFX_H
 #define _ADAFRUIT_GFX_H
 
-#include "application.h"
+#include "Particle.h"
 #include "fonts.h"
 
 
@@ -58,6 +67,7 @@ class Adafruit_GFX : public Print {
 
   virtual size_t write(uint8_t);
 
+  int16_t charWidth(unsigned char c);
 
   int16_t
     height(void),

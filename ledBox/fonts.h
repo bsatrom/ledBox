@@ -2,6 +2,7 @@
 Multifont GFX library is adapted from Adafruit_GFX library by Paul Kourany
 v1.0.0, May 2014 Initial Release
 v1.0.1, June 2014 Font Compilation update
+v1.0.2, Aug 2015 Added charWidth(char) function to return char width in pixels
 
 Please read README.pdf for details
 */
@@ -11,7 +12,7 @@ Please read README.pdf for details
 #ifndef _fonts_h
 #define _fonts_h
 
-#include "application.h"
+#include "Particle.h"
 
 //Font selection for compiling - comment out or uncomment definitions as required
 //NOTE: GLCDFONT is default font and always included

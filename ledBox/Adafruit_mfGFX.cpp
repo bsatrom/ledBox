@@ -2,6 +2,8 @@
 Multifont GFX library is adapted from Adafruit_GFX library by Paul Kourany
 v1.0.0, May 2014 Initial Release
 v1.0.1, June 2014 Font Compilation update
+v1.0.2, Aug 2015 Added charWidth(char) function to return char width in pixels
+
 
 Please read README.pdf for details
 
@@ -12,7 +14,7 @@ paired with a hardware-specific library for each display device we carry
 
 Adafruit invests time and resources providing this open source code, please
 support Adafruit & open-source hardware by purchasing products from Adafruit!
- 
+
 Copyright (c) 2013 Adafruit Industries.  All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -41,7 +43,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "fonts.h"
 
 
-#define pgm_read_byte(addr) (*(const uint8_t *)(addr))
 
 
 Adafruit_GFX::Adafruit_GFX(int16_t w, int16_t h):
@@ -138,7 +139,7 @@ void Adafruit_GFX::drawCircle(int16_t x0, int16_t y0, int16_t r,
     x++;
     ddF_x += 2;
     f += ddF_x;
-  
+
     drawPixel(x0 + x, y0 + y, color);
     drawPixel(x0 - x, y0 + y, color);
     drawPixel(x0 + x, y0 - y, color);
@@ -170,7 +171,7 @@ void Adafruit_GFX::drawCircleHelper( int16_t x0, int16_t y0,
     if (cornername & 0x4) {
       drawPixel(x0 + x, y0 + y, color);
       drawPixel(x0 + y, y0 + x, color);
-    } 
+    }
     if (cornername & 0x2) {
       drawPixel(x0 + x, y0 - y, color);
       drawPixel(x0 + y, y0 - x, color);
@@ -428,7 +429,7 @@ void Adafruit_GFX::drawBitmap(int16_t x, int16_t y,
 }
 
 size_t Adafruit_GFX::write(uint8_t c) {
-  
+
   if (c == '\n') {
     cursor_y += textsize*fontDesc[0].height;	//all chars are same height so use height of space char
     cursor_x  = 0;
@@ -466,7 +467,7 @@ void Adafruit_GFX::drawChar(int16_t x, int16_t y, unsigned char c,
   else {
     c -= fontStart;
   }
- 
+
   if((x >= _width)            || // Clip right
      (y >= _height)           || // Clip bottom
      ((x + (fontDesc[c].width * size) - 1) < 0) || // Clip left
@@ -475,7 +476,7 @@ void Adafruit_GFX::drawChar(int16_t x, int16_t y, unsigned char c,
 
 	uint8_t bitCount=0;
   	uint16_t fontIndex = fontDesc[c].offset + 2; //((fontDesc + c)->offset) + 2;
-  
+
   for (int8_t i=0; i<fontDesc[c].height; i++ ) {	// i<fontHeight
     uint8_t line;
     for (int8_t j = 0; j<fontDesc[c].width; j++) {			//j<fontWidth
@@ -488,7 +489,7 @@ void Adafruit_GFX::drawChar(int16_t x, int16_t y, unsigned char c,
           }
         else {  // big size
           fillRect(x+(j*size), y+(i*size), size, size, color);
-        } 
+        }
       } else if (bg != color) {
         if (size == 1) // default size
           drawPixel(x+j, y+i, bg);
@@ -512,14 +513,14 @@ void Adafruit_GFX::setTextSize(uint8_t s) {
 }
 
 void Adafruit_GFX::setTextColor(uint16_t c) {
-  // For 'transparent' background, we'll set the bg 
+  // For 'transparent' background, we'll set the bg
   // to the same as fg instead of using a flag
   textcolor = textbgcolor = c;
 }
 
 void Adafruit_GFX::setTextColor(uint16_t c, uint16_t b) {
   textcolor   = c;
-  textbgcolor = b; 
+  textbgcolor = b;
 }
 
 void Adafruit_GFX::setTextWrap(boolean w) {
@@ -546,11 +547,22 @@ void Adafruit_GFX::setRotation(uint8_t x) {
   }
 }
 
+// Return width of char c in pixels including kern pixel value (default is 1)
+int16_t Adafruit_GFX::charWidth(unsigned char c) {
+
+  if (c < fontStart || c > fontEnd)
+    c = 0;
+  else
+    c -= fontStart;
+
+  return (fontDesc[c].width + fontKern);
+}
+
 // Return the size of the display (per current rotation)
 int16_t Adafruit_GFX::width(void) {
   return _width;
 }
- 
+
 int16_t Adafruit_GFX::height(void) {
   return _height;
 }
